@@ -19,7 +19,9 @@ Consider the technical hurdles you faced:
 ## 🚀 Future Enhancements
 If you had more time, what would you improve or add?
 
-
+If i had more time, I would:
+- Add more refine or polish existing codes
+-work  more on logical aspect of the given instructions.
 ---
 
 ## 📝 Notes for Future You
@@ -27,7 +29,7 @@ Use this space to leave important reminders:
 - Key decisions and why they were made
 - Pitfalls to avoid next time
 - Tools or techniques that worked particularly well
-
+ 
 ---
 
 > 💡 **Tip:** Keeping this section up to date will help you (or other contributors) quickly understand the reasoning behind past decisions and avoid repeating mistakes.
