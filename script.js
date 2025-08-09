@@ -97,6 +97,9 @@ function getLearnerData(course, ag, submissions) {
     // return the dates of submission
 
     for (const subs of submissions) {
+        let totalScore = 0;
+        let totalPointPossible = 0;
+        const assignmentScores = {}; 
 
         for (const asign of ag.assignments) {
 
@@ -143,8 +146,8 @@ function getLearnerData(course, ag, submissions) {
                         totalPointPossible += pointPossible;
                         totalScore += score;
 
-                        percentage = score / pointPossible;
-                        console.log("lol", assignmentScores[asign.id] = percentage);
+                        const percentage = score / pointPossible;
+                        console.log("------>", assignmentScores[subs.assignment_id] = percentage);
 
 
                     }
@@ -177,7 +180,7 @@ function getLearnerData(course, ag, submissions) {
                 }
             } catch (err) {
                 console.error("Error calculating learner averages:", err.message);
-                throw err();
+                
             }
         }
         //  result =console.log(`----temp ${submissionScore}`);
@@ -185,8 +188,8 @@ function getLearnerData(course, ag, submissions) {
         // return  console.log(status);
     }
 
-    console.log(" ToTalscore", totalScore);
-    console.log("ToTalPointPossible", totalPointPossible);
+    // console.log(" ToTalscore", totalScore);
+    // console.log("ToTalPointPossible", totalPointPossible);
     // console.log("---sub", submissionScore);
     // temp = console.log("---asign",asign);
     console.log(items);
