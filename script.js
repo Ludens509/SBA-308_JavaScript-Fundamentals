@@ -88,9 +88,11 @@ function getLearnerData(course, ag, submissions) {
     let pointPossible;
     let totalPointPossible = 0;
     let temp;
-    let exist;
+    const assignmentScores = {};
+    let percentage;
     let items = [];
     let avg;
+    let a, b, c, d = 0;
 
     // return the dates of submission
 
@@ -100,62 +102,92 @@ function getLearnerData(course, ag, submissions) {
 
             // if (subs.assignment_id === assignment.id ){
             //     console.log("Total score",totalScore += subs.submission.score);
-            //    console.log( "totalPoint",totalPointPossible += assignment.points_possible);
-            if (subs.assignment_id === asign.id) {
-                temp = subs.learner_id;
-                score = subs.submission.score;
-                pointPossible = asign.points_possible;
-                // Check if this learner_id already exists in items array
-
-                if (!items.find(item => item.id === subs.learner_id)) {
-                    items.push({ id: subs.learner_id });
-                }
+            try {  //    console.log( "totalPoint",totalPointPossible += assignment.points_possible);
+                if (subs.assignment_id === asign.id) {
+                    temp = subs.learner_id;
+                    score = subs.submission.score;
+                    pointPossible = asign.points_possible;
 
 
-                console.log(`temp-value ${temp}`);
-                //    submissionScore= [ subs];
 
+                    console.log(`temp-value ${temp}`);
+                    //    submissionScore= [ subs];
 
-                // ListAsignment = console.log(asign.due_at);
-                if (asign.due_at !== '3156-11-15') {
+                    const dueDate = new Date(asign.due_at);
+                    const submitAt = new Date(subs.submission.submitted_at);
+                    const today = new Date;
+                    //Only assignment that are due
+                    if (dueDate <= today) {
+                        // ListAsignment = "2023-01-07";
+                        // temp = ListAsignment.slice(0, 4);
+                        // temp= ListAsignment.split("-")[0];
 
-                    ListAsignment = "2023-01-07";
-                    temp = ListAsignment.slice(0, 4);
-                    // temp= ListAsignment.split("-")[0];
-
-                    if (asign.due_at !== '3156-11-15') {
-                        status = true;
-                        ListAsignment = "2023-01-07";
+                        // a = asign.due_at.slice(6, 7);
+                        // b = subs.submission.submitted_at.slice(6, 7);
+                        // c = asign.due_at.slice(8, 10);
+                        // d = subs.submission.submitted_at.slice(8, 10);
                         // temp = ListAsignment.slice(6, 7);
                         // temp= ListAsignment.split("-")[0];
                         //if due_at is greater than submitted_at penalty(10% or Possible point) will deduct the score
-                        if (asign.due_at.slice(6, 7) > subs.submission.submitted_at.slice(6, 7) && asign.due_at.slice(8, 10) > subs.submission.submitted_at.slice(8, 10)) {
-                            penaltyPoint = pointPossible - 0.10;
-                            totalPointPossible -= penaltyPoint;
-                        } else {
+                        // if (asign.due_at.slice(6, 7) <= subs.submission.submitted_at.slice(6, 7) && asign.due_at.slice(8, 10) <= subs.submission.submitted_at.slice(8, 10)) {
+
+                        if (submitAt > dueDate) {
+                            // totalPointPossible += pointPossible;
+                            // totalScore+=score;
+                            penaltyPoint = pointPossible * 0.10;
+                            score -= penaltyPoint;
                         }
-                    } else {
-                        // console.log(`----${ListAsignment}`);
-                        status = false;
+                        // percentage = score/pointPossible;
+                        // assignmentScores[subs.assignment_id];
+
+                        totalPointPossible += pointPossible;
+                        totalScore += score;
+
+                        percentage = score / pointPossible;
+                        console.log("lol", assignmentScores[asign.id] = percentage);
+
+
                     }
 
+                    if (totalPointPossible === 0) {
+                        throw `Assignment for the learner are non-existing ${subs.learner_id}`;
+                        continue;
+                    }
 
-                } else {
+                    // calculate avg
 
-                    // console.log(`----${ListAsignment}`);
-                    status = false;
+                    avg = totalScore / totalPointPossible;
+
+                    console.log(`avg-${avg}`);
+                    // display
+                    // Check if this learner_id already exists in items array
+                    // if (!items.find(item => item.id === subs.learner_id)) {
+                    // avg = totalScore / totalPointPossible;
+                    items.push({
+                        id: subs.learner_id,
+                        avg: parseFloat(avg.toFixed(3)),
+                        ...assignmentScores
+                    });
+                    // }
+
+
+
+
+
                 }
+            } catch (err) {
+                console.error("Error calculating learner averages:", err.message);
+                throw err();
             }
-
         }
         //  result =console.log(`----temp ${submissionScore}`);
         // return console.log(`----temp ${temp}`);
         // return  console.log(status);
     }
 
-    console.log(" ToTalscore", totalScore += score);
-    console.log("ToTalPointPossible", totalPointPossible += pointPossible);
-    console.log("---sub", submissionScore);
+    console.log(" ToTalscore", totalScore);
+    console.log("ToTalPointPossible", totalPointPossible);
+    // console.log("---sub", submissionScore);
     // temp = console.log("---asign",asign);
     console.log(items);
     //  submittedAt();
@@ -184,7 +216,7 @@ console.log(result);
 //       2: 0.833 // late: (140 - 15) / 150
 //     }
 //   ];
-
+// -----------------helper Function---------------
 /*
     function currentDate() {
         function getCurrentYear() {
