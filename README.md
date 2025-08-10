@@ -29,7 +29,7 @@ Use this space to leave important reminders:
 - Key decisions and why they were made
 - Pitfalls to avoid next time
 - Tools or techniques that worked particularly well
- 
+ I tried to follow the instructions as best as I could. Unfortunately i couln't filtered my result so i can remove the unwanted result display, then i have decide to turn it in just as it comes . I would also like to improve on my coding skills and learn new technologies that can help me in future projects.
 ---
 
 > 💡 **Tip:** Keeping this section up to date will help you (or other contributors) quickly understand the reasoning behind past decisions and avoid repeating mistakes.
