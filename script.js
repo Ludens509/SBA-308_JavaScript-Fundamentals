@@ -98,11 +98,6 @@ function getLearnerData(course, ag, submissions) {
 
 
 
-    // for (const asignment of ag.assignments) {
-
-
-    // try {
-
 
     for (const submission of submissions) {
         // Check if learner ID already exists in our array and type of number
@@ -125,7 +120,9 @@ function getLearnerData(course, ag, submissions) {
 
     for (const learnerId of learnerIds) {
 
-
+        let totalScore = 0;
+        let totalPointPossible = 0;
+        const assignmentScores = {};
         // get submission only for learnerId included in Assignment program
         const learnerSubmissions = [];
         for (const subs of submissions) {
@@ -136,9 +133,7 @@ function getLearnerData(course, ag, submissions) {
 
 
         for (const subs of learnerSubmissions) {
-            let totalScore = 0;
-            let totalPointPossible = 0;
-            const assignmentScores = {};
+
 
             // get all the assigment data
             let assignment = null;
@@ -149,104 +144,107 @@ function getLearnerData(course, ag, submissions) {
                 }
             }
 
-            if (!assignment) {
-                console.log(` Assignment ${subs.assignment_id} not found, skipping`);
-                continue;
-            }
-
-
-            console.log("Learner IDs found:", learnerIds);
-            //    console.log( "totalPoint",totalPointPossible += assignment.points_possible);
-            if (course.course_id !== assignment.course_id) {
-                throw new Error(` AssignmentGroup ${assignment.course_id} does not belong to its course (mismatching ${course.course_id})`);
-
-            }
-
-            // Validate assignment data
-            pointPossible = parseFloat(assignment.points_possible);
-            if (isNaN(pointPossible) || pointPossible <= 0) {
-                console.warn(`Warning: Invalid points_possible (${assignment.points_possible}) for assignment ${assignment.id}. Skipping assignment.`);
-                continue;
-            }
-
-            // Parse and validate score
-            score = parseFloat(subs.submission.score);
-            if (isNaN(score)) {
-                console.warn(`Warning: Invalid score (${subs.submission.score}) for learner ${learnersId}, assignment ${assignment.id}. Treating as 0.`);
-                score = 0;
-            }
-
-            if (assignment) {
-
-                console.log(`  loading... assignment ${assignment.id}: ${assignment.name}`);
-
-                // Calculate the due date
-                const dueDate = new Date(assignment.due_at);
-                // calculate the subit_at Date
-                const submitAt = new Date(subs.submission.submitted_at);
-
-                console.log(` Due: ${assignment.due_at}, Submitted: ${subs.submission.submitted_at}`);
-                // get current date to make sure that project are yet due
-                const today = new Date();
-                //Only assignment that are due
-                if (dueDate <= today) {
-
-                    score = subs.submission.score;
-                    pointPossible = assignment.points_possible;
-
-                    if (submitAt > dueDate) {
-
-                        const penaltyPoint = pointPossible * 0.10;
-                        score -= penaltyPoint;
-                        console.log(`Late penalty applied: ${subs.submission.score} - ${penaltyPoint} = ${score}`);
-                    }
-
-                    //Make the aggragation of the score
-                    totalPointPossible += pointPossible;
-                    totalScore += score;
-
-                    // Calculate the percentage
-                    const percentage = score / pointPossible;
-                    assignmentScores[assignment.id] = percentage.toFixed(3);
-
-
-                    console.log(`Score: ${score}/${pointPossible} = ${percentage.toFixed(3)}`);
-                } else {
-                    console.log(`Assignment not due yet (${assignment.due_at})`);
+            try {
+                if (!assignment) {
+                    throw new Error(` Assignment ${subs.assignment_id} not found, skipping`);
+                    continue;
                 }
+
+
+                console.log("Learner IDs found:", learnerIds);
+                //    console.log( "totalPoint",totalPointPossible += assignment.points_possible);
+                if (course.course_id !== assignment.course_id) {
+                    throw new Error(` AssignmentGroup ${assignment.course_id} does not belong to its course (mismatching ${course.course_id})`);
+
+                }
+
+                // Validate assignment data
+                pointPossible = parseFloat(assignment.points_possible);
+                if (isNaN(pointPossible) || pointPossible <= 0) {
+                    throw new Error(`Warning: Invalid points_possible (${assignment.points_possible}) for assignment ${assignment.id}. Skipping assignment.`);
+                    continue;
+                }
+
+                // Parse and validate score
+                score = parseFloat(subs.submission.score);
+                if (isNaN(score)) {
+                    throw new Error(`Warning: Invalid score (${subs.submission.score}) for learner ${learnersId}, assignment ${assignment.id}. Treating as 0.`);
+                    score = 0;
+                }
+
+                if (assignment) {
+
+                    // console.log(`  loading... assignment ${assignment.id}: ${assignment.name}`);
+
+                    // Calculate the due date
+                    const dueDate = new Date(assignment.due_at);
+                    // calculate the subit_at Date
+                    const submitAt = new Date(subs.submission.submitted_at);
+
+                    // console.log(` Due: ${assignment.due_at}, Submitted: ${subs.submission.submitted_at}`);
+                    // get current date to make sure that project are yet due
+                    const today = new Date();
+                    //Only assignment that are due
+                    if (dueDate <= today) {
+
+                        score = subs.submission.score;
+                        pointPossible = assignment.points_possible;
+
+                        if (submitAt > dueDate) {
+
+                            const penaltyPoint = pointPossible * 0.10;
+                            score -= penaltyPoint;
+                            // console.log(`Late penalty applied: ${subs.submission.score} - ${penaltyPoint} = ${score}`);
+                        }
+
+                        //Make the aggragation of the score
+                        totalPointPossible += pointPossible;
+                        totalScore += score;
+
+                        // Calculate the percentage
+                        const percentage = score / pointPossible;
+                        assignmentScores[assignment.id] = percentage.toFixed(3);
+
+
+                        // console.log(`Score: ${score}/${pointPossible} = ${percentage.toFixed(3)}`);
+                    } else {
+                        console.log(`Assignment not due yet (${assignment.due_at})`);
+                    }
+                }
+
+                if (totalPointPossible > 0) {
+
+                    // calculate avg
+                    // 
+                    avg = totalScore / totalPointPossible;
+
+                    // display
+                    // Check if this learner_id already exists in items array
+                    //
+                    // avg = totalScore / totalPointPossible;
+                    const items = {
+                        id: learnerId,
+                        avg: parseFloat(avg.toFixed(3)),
+                        ...assignmentScores,
+                    };
+
+
+                    results.push(items);
+
+
+                    // console.log(`  Final: Total ${totalScore}/${totalPointPossible} = ${avg.toFixed(3)}`);
+                    console.log(`  Result:`, items);
+                } else {
+                    console.log("nothing found");
+                }
+
+
+
+            } catch (err) {
+                console.error("Error calculating learner averages:", err.message);
+
             }
-
-            if (totalPointPossible > 0) {
-
-                // calculate avg
-                // 
-                avg = totalScore / totalPointPossible;
-
-                // display
-                // Check if this learner_id already exists in items array
-                // if (!items.find(item => item.id === subs.learner_id)) {
-                // avg = totalScore / totalPointPossible;
-                const items = {
-                    id: learnerId,
-                    avg: parseFloat(avg.toFixed(3)),
-                    ...assignmentScores,
-                };
-
-                results.push(items);
-
-                console.log(`  Final: Total ${totalScore}/${totalPointPossible} = ${avg.toFixed(3)}`);
-                console.log(`  Result:`, items);
-            } else {
-                console.log("nothing found");
-            }
-
-
         }
-        // } catch (err) {
-        //     console.error("Error calculating learner averages:", err.message);
-
-        // }
-        // }
 
 
     }
@@ -256,7 +254,7 @@ function getLearnerData(course, ag, submissions) {
 }
 
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-
+console.log("\n");
 console.log(result);
 
 // const result = [
@@ -274,24 +272,3 @@ console.log(result);
 //     }
 //   ];
 // -----------------helper Function---------------
-/*
-    function currentDate() {
-        function getCurrentYear() {
-            const today = new Date;
-            const year = today.getFullYear();
-            return year;
-        }
-        function getCurrentMonth() {
-            const today = new Date;
-            const month = today.getMonth() + 1; //get month (0-based index, so i add 1)
-            return month;
-        }
-        function getCurrentDay(year = getCurrentYear()) {
-            const today = new Date;
-            today.setFullYear(year); // i set the year to 2025
-            const day = today.getDate(); //get the day
-            return day;
-        }
-        return console.log(` Date -${getCurrentYear()}-${getCurrentMonth()}-${getCurrentDay()}`);
-    }
-*/ 
