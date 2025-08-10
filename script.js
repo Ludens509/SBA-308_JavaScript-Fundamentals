@@ -125,7 +125,6 @@ function getLearnerData(course, ag, submissions) {
 
     for (const learnerId of learnerIds) {
 
-        // FIXED: Declare variables at LEARNER level (not inside assignment loop!)
 
         // get submission only for learnerId included in Assignment program
         const learnerSubmissions = [];
@@ -211,9 +210,9 @@ function getLearnerData(course, ag, submissions) {
                     assignmentScores[assignment.id] = percentage.toFixed(3);
 
 
-                    console.log(`    Score: ${score}/${pointPossible} = ${percentage.toFixed(3)}`);
+                    console.log(`Score: ${score}/${pointPossible} = ${percentage.toFixed(3)}`);
                 } else {
-                    console.log(`    ⚠️ Assignment not due yet (${assignment.due_at})`);
+                    console.log(`Assignment not due yet (${assignment.due_at})`);
                 }
             }
 
